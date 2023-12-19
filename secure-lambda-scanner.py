@@ -3,6 +3,7 @@ import requests
 import zipfile
 import logging
 import io
+import os
 from bandit.core import config as bandit_config
 from bandit.core import manager as bandit_manager
 from botocore.exceptions import ClientError
@@ -22,11 +23,19 @@ def main():
             if 'python' in function['Runtime']:
                 code_url = lambda_client.get_function(FunctionName=function['FunctionName'])['Code']['Location']
                 print(function['FunctionName'], code_url, region['RegionName'], '', sep='\n')
-                get_url = requests.get(code_url)
-                zip_file = zipfile.ZipFile(io.BytesIO(get_url.content))
-                zip_file.extractall(function['FunctionName'])
-                #open(function['FunctionName'], "wb").write(url_response.content)
-                #issues = manager.run_tests(code_url)
+                destination_folder = function['FunctionName']
+                url_response = requests.get(code_url)
+                if url_response.status_code == 200:
+                    zip_file = zipfile.ZipFile(io.BytesIO(url_response.content))
+                    zip_file.extractall(destination_folder)
+                    print(f"Downloaded and extracted to {destination_folder}")
+                else:
+                    print(f"Failed to download. Status code: {url_response.status_code}")
+
+                for filename in os.listdir(destination_folder):
+                    f = os.path.join(destination_folder, filename)
+                    if os.path.isfile(f):
+                        issues = manager.run_tests(f)
 
 
 
