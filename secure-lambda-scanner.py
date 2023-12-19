@@ -32,10 +32,13 @@ def main():
                 else:
                     print(f"Failed to download. Status code: {url_response.status_code}")
 
+                # iterate over files in the lambda function directory
                 for filename in os.listdir(destination_folder):
                     f = os.path.join(destination_folder, filename)
+                    # checking if it is a file
                     if os.path.isfile(f):
-                        issues = manager.run_tests(f)
+                        issues = manager.run_tests()
+                        print(issues)
 
 
 
