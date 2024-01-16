@@ -5,8 +5,6 @@ import requests
 import zipfile
 import logging
 import io
-import os
-import bandit
 from botocore.exceptions import ClientError
 
 import shutil
