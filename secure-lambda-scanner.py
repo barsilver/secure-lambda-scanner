@@ -11,21 +11,24 @@ import shutil
 import subprocess
 
 @click.command()
-# Set destination path to store the bandit results files
-@click.option('--destination-directory', '-d', '--dest', required=True, type=str)
+@click.option('--destination-directory', '-d', '--dest', required=True, type=str, help="Set destination path to store the bandit results files.")
+@click.option('--format', '-f', '--fmt', default='txt', show_default=True, type=click.Choice(['txt', 'json', 'yaml', 'xml', 'html', 'csv']), help="Specify the output format. Default is set to txt")
 
-def main(destination_directory):
+def main(destination_directory, format):
     ec2_client = boto3.client('ec2')
     regions = ec2_client.describe_regions()
 
     # Find the location of the bandit executable
     bandit_path = shutil.which('bandit')
 
+    # Loop over all regions to find all lambda functions in the AWS account
     for region in regions['Regions']:
         lambda_client = boto3.client('lambda', region_name=region['RegionName'])
         functions = lambda_client.list_functions()
+        # Loop over all python lambda functions in the region
         for function in functions['Functions']:
             if 'python' in function['Runtime']:
+                # Download code from URL and extract all files
                 code_url = lambda_client.get_function(FunctionName=function['FunctionName'])['Code']['Location']
                 destination_folder = function['FunctionName']
                 url_response = requests.get(code_url)
@@ -36,7 +39,7 @@ def main(destination_directory):
 
                     if bandit_path is not None:
                         # Run bandit as a subprocess
-                        bandit_cmd = f'{bandit_path} -r {destination_folder} -f json -o /{destination_directory}/{destination_folder}.json'
+                        bandit_cmd = f'{bandit_path} -r {destination_folder} -f {format} -o /{destination_directory}/{destination_folder}.json'
                         result = subprocess.run(bandit_cmd, shell=True)
 
                     else:
