@@ -40,7 +40,7 @@ def main(destination_directory, format):
                     if bandit_path is not None:
                         # Run bandit as a subprocess
                         bandit_cmd = f'{bandit_path} -r {destination_folder} -f {format} -o /{destination_directory}/{destination_folder}.json'
-                        result = subprocess.run(bandit_cmd, shell=True)
+                        result = subprocess.run(bandit_cmd)
 
                     else:
                         print("Error: bandit executable not found. Make sure it is installed and in your system's PATH.")
