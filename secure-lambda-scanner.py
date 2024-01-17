@@ -14,7 +14,12 @@ import subprocess
 @click.option('--destination-directory', '-d', '--dest', required=True, type=str, help="Set destination path to store the bandit results files.")
 @click.option('--format', '-f', '--fmt', default='txt', show_default=True, type=click.Choice(['txt', 'json', 'yaml', 'xml', 'html', 'csv']), help="Specify the output format. Default is set to txt")
 
+
 def main(destination_directory, format):
+    
+    # Set the timeout value (in seconds)
+    timeout_seconds = 10
+
     ec2_client = boto3.client('ec2')
     regions = ec2_client.describe_regions()
 
@@ -31,7 +36,7 @@ def main(destination_directory, format):
                 # Download code from URL and extract all files
                 code_url = lambda_client.get_function(FunctionName=function['FunctionName'])['Code']['Location']
                 destination_folder = function['FunctionName']
-                url_response = requests.get(code_url)
+                url_response = requests.get(code_url, timeout=timeout_seconds)
                 if url_response.status_code == 200:
                     zip_file = zipfile.ZipFile(io.BytesIO(url_response.content))
                     zip_file.extractall(destination_folder)
