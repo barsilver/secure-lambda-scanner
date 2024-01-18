@@ -1,3 +1,2 @@
 [tool.bandit]
 exclude_dirs = ["./venv/*"]
-#skips = ["B404", "B603"]
