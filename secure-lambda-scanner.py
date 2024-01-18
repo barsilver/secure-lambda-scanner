@@ -11,11 +11,12 @@ import shutil
 import subprocess  # nosec B404
 
 @click.command()
-@click.option('--destination-directory', '-d', '--dest', required=True, type=str, help="Set destination path to store the bandit results files.")
+@click.option('--destination-directory', '-d', '--dest', required=True, type=str, help="Set destination path to store the bandit results.")
 @click.option('--format', '-f', '--fmt', default='txt', show_default=True, type=click.Choice(['txt', 'json', 'yaml', 'xml', 'html', 'csv']), help="Specify the output format. Default is set to txt")
+@click.option('--bucket-name', '-b', '--bucket', type=str, help="Specifies the destination bucket for uploading the files containing bandit results.")
 
 
-def main(destination_directory, format):
+def main(destination_directory, format, bucket_name):
     
     # Set the timeout value (in seconds)
     timeout_seconds = 10
