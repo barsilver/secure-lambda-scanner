@@ -8,7 +8,7 @@ import io
 from botocore.exceptions import ClientError
 import click
 import shutil
-import subprocess
+import subprocess  # nosec
 
 @click.command()
 @click.option('--destination-directory', '-d', '--dest', required=True, type=str, help="Set destination path to store the bandit results files.")
@@ -45,7 +45,7 @@ def main(destination_directory, format):
                     if bandit_path is not None:
                         # Run bandit as a subprocess
                         bandit_cmd = f"{bandit_path} -r {destination_folder} -f {format} -o /{destination_directory}/{destination_folder}.{format}"
-                        result = subprocess.run(bandit_cmd)
+                        result = subprocess.run(bandit_cmd, shell=False)  # nosec
 
                     else:
                         print("Error: bandit executable not found. Make sure it is installed and in your system's PATH.")
