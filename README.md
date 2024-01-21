@@ -83,4 +83,4 @@ exclude_dirs = ["./venv/*"]
 
 ## Note
 
-Make sure to run the script within a virtual environment with the specified requirements and pre-commit hooks to avoid potential errors, such as "bandit executable not found" or missing Python modules.
+Make sure to run the script within a virtual environment with the specified requirements and pre-commit hooks to avoid potential errors, such as "command not found: bandit" or missing Python modules.
